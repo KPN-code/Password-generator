@@ -4,11 +4,13 @@ import string
 
 app = Flask(__name__)
 
-AMBIGUOUS = "{}[]()/\\'\"`~,;:.<>").
+AMBIGUOUS = "{}[]()/\\'\"`~,;:.<>"
 CONFUSING = "O0oIl1|"
 
 
-def generate_password(length=16, use_lower=True, use_upper=True, use_digits=True, use_symbols=True, avoid_ambiguous=True):
+def generate_password(length=16, use_lower=True, use_upper=True,
+                      use_digits=True, use_symbols=True,
+                      avoid_ambiguous=True):
     pools = []
     if use_lower:
         pools.append(string.ascii_lowercase)
@@ -17,31 +19,33 @@ def generate_password(length=16, use_lower=True, use_upper=True, use_digits=True
     if use_digits:
         pools.append(string.digits)
     if use_symbols:
-        pools.append("!@#$%^&*-_=+?" )
+        pools.append("!@#$%^&*-_=+?")
 
     if not pools:
         raise ValueError("Select at least one character set")
 
-    # rakennus
+    # rakennetaan merkistö
     alphabet = "".join(pools)
     if avoid_ambiguous:
-        # pois huonot
         for ch in AMBIGUOUS + CONFUSING:
             alphabet = alphabet.replace(ch, "")
-        pools = ["".join([c for c in pool if c not in (AMBIGUOUS + CONFUSING)]) for pool in pools]
+        pools = [
+            "".join([c for c in pool if c not in (AMBIGUOUS + CONFUSING)])
+            for pool in pools
+        ]
 
-    # varmistus
+    # varmistetaan, että pituus riittää
     if length < len(pools):
         raise ValueError(f"Length must be at least {len(pools)} for the chosen options")
 
-    # aloittaa yhdellä 
+    # yksi merkki jokaisesta poolista
     password_chars = [secrets.choice(pool) for pool in pools]
 
-    # lopun täyttö
+    # loput satunnaisesti
     for _ in range(length - len(password_chars)):
         password_chars.append(secrets.choice(alphabet))
 
-    # turvallinen sekoitus
+    # sekoitus
     secrets.SystemRandom().shuffle(password_chars)
 
     return "".join(password_chars)
@@ -67,7 +71,7 @@ def api_generate():
         return jsonify({"password": pwd}), 200
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
-    except Exception as e:
+    except Exception:
         return jsonify({"error": "Unexpected server error"}), 500
 
 
