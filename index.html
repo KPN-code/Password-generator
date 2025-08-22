@@ -1,90 +1,66 @@
-<!DOCTYPE html> <!-- Määrittää dokumentin tyypiksi HTML5 -->
-<html lang="en"> <!-- Asettaa kielen englanniksi -->
+<!DOCTYPE html> <!-- Tyyppi -->
+<html lang="en"> <!-- Kieli -->
 <head>
-  <meta charset="utf-8" /> <!-- Määrittää merkistökoodauksen UTF-8 -->
-  <meta name="viewport" content="width=device-width, initial-scale=1" /> <!-- Responsiivisuus mobiilissa -->
-  <title>Password Generator</title> <!-- Sivun otsikko -->
-
-  <!-- Fontin esilataus ja Google Fonts Inter-tyyli -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-
-  <!-- Tailwind CSS käyttöön -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Omat tyylit -->
+  <meta charset="utf-8" /> <!-- Merkkikoodaus -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" /> <!-- Skaalaus -->
+  <title>Password Generator</title> <!-- Otsikko -->
+  <script src="https://cdn.tailwindcss.com"></script> <!-- Tyylit -->
   <style>
-    body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; } /* Fonttiperhe */
-    .card { box-shadow: 0 10px 25px rgba(0,0,0,.08); } /* Kortin varjostus */
-    .range { accent-color: #4f46e5; } /* Sliderin väri */
+    body { font-family: sans-serif; } /* Fontti */
+    .card { box-shadow: 0 8px 20px rgba(0,0,0,0.08); } /* Varjo */
+    .range { accent-color: #4f46e5; } /* Liukusäädin */
   </style>
 </head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-6"> <!-- Tausta -->
 
-<body class="bg-slate-50 min-h-screen flex items-center justify-center p-6"> <!-- Tausta ja keskitys -->
+  <main class="w-full max-w-xl"> <!-- Sisältö -->
+    <div class="card bg-white rounded-xl p-6"> <!-- Kortti -->
+      <h1 class="text-2xl font-semibold mb-2">Password Generator</h1> <!-- Otsikko -->
+      <p class="text-slate-600 mb-6">Generate strong, customizable passwords.</p> <!-- Kuvaus -->
 
-  <main class="w-full max-w-2xl">
-    <div class="card bg-white rounded-2xl p-6 md:p-8"> <!-- Pääkortti valkoisella taustalla -->
-      <h1 class="text-2xl md:text-3xl font-semibold tracking-tight mb-2">Password Generator</h1> <!-- Otsikko -->
-      <p class="text-slate-600 mb-6">Generate strong, customizable passwords. Powered by <span class="font-semibold">Flask</span>.</p> <!-- Kuvausteksti -->
+      <div class="grid md:grid-cols-2 gap-6"> <!-- Rivit -->
 
-      <div class="grid md:grid-cols-2 gap-6"> <!-- Kahden sarakkeen layout -->
-
-        <!-- Vasemman puolen asetukset -->
-        <div class="space-y-4">
-          <!-- Salasanan pituus -->
-          <label class="block text-sm font-medium text-slate-700">
-            Length: <span id="lenLabel" class="font-semibold">16</span> <!-- Näyttää valitun pituuden -->
+        <div class="space-y-4"> <!-- Asetukset -->
+          <label class="block text-sm text-slate-700">
+            Length: <span id="lenLabel" class="font-semibold">16</span> <!-- Pituus -->
           </label>
-          <input id="length" class="w-full range" type="range" min="8" max="64" value="16" /> <!-- Slider pituudelle -->
+          <input id="length" class="w-full range" type="range" min="8" max="64" value="16" /> <!-- Liukusäädin -->
 
-          <!-- Valinnat mitä merkkejä salasanaan sisällytetään -->
-          <div class="grid grid-cols-2 gap-3 pt-2">
-            <label class="flex items-center gap-2 text-slate-700"><input id="lower" type="checkbox" checked> Lowercase</label> <!-- pienet kirjaimet -->
-            <label class="flex items-center gap-2 text-slate-700"><input id="upper" type="checkbox" checked> Uppercase</label> <!-- isot kirjaimet -->
-            <label class="flex items-center gap-2 text-slate-700"><input id="digits" type="checkbox" checked> Digits</label> <!-- numerot -->
-            <label class="flex items-center gap-2 text-slate-700"><input id="symbols" type="checkbox" checked> Symbols</label> <!-- symbolit -->
+          <div class="grid grid-cols-2 gap-3 pt-2 text-slate-700 text-sm"> <!-- Valinnat -->
+            <label><input id="lower" type="checkbox" checked> Lowercase</label> <!-- pienet -->
+            <label><input id="upper" type="checkbox" checked> Uppercase</label> <!-- isot -->
+            <label><input id="digits" type="checkbox" checked> Digits</label> <!-- numerot -->
+            <label><input id="symbols" type="checkbox" checked> Symbols</label> <!-- symbolit -->
           </div>
 
-          <!-- Vältetään vaikeasti erotettavia merkkejä (esim. O ja 0) -->
-          <label class="flex items-center gap-2 text-slate-700 pt-2">
-            <input id="avoid" type="checkbox" checked> Avoid ambiguous chars
+          <label class="text-slate-700 text-sm pt-2 block">
+            <input id="avoid" type="checkbox" checked> Avoid ambiguous characters <!-- epäselvät -->
           </label>
 
-          <!-- Luo salasana -nappi -->
-          <button id="generate" class="mt-4 w-full md:w-auto inline-flex items-center justify-center rounded-xl px-4 py-2.5 bg-indigo-600 text-white font-medium hover:bg-indigo-700 active:scale-[.99] transition">Generate</button>
+          <button id="generate" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded px-4 py-2">Generate</button> <!-- Generointi -->
         </div>
 
-        <!-- Oikean puolen tulostus -->
-        <div class="space-y-4">
-          <label class="block text-sm font-medium text-slate-700">Password</label> <!-- Kentän otsikko -->
-          
-          <!-- Salasana ja kopiointinappi -->
-          <div class="flex items-center gap-3">
-            <input id="password" type="text" readonly class="flex-1 rounded-xl border border-slate-200 px-3 py-2.5 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Click Generate" />
-            <button id="copy" class="rounded-xl px-3 py-2.5 border border-slate-200 hover:bg-slate-100">Copy</button>
+        <div class="space-y-4"> <!-- Tuloste -->
+          <label class="block text-sm text-slate-700">Password</label> <!-- Kenttä -->
+          <div class="flex gap-3">
+            <input id="password" type="text" readonly class="flex-1 border border-slate-200 px-3 py-2 bg-slate-50 rounded" placeholder="Click Generate" /> <!-- Salasana -->
+            <button id="copy" class="border border-slate-200 px-3 py-2 rounded">Copy</button> <!-- Kopiointi -->
           </div>
 
-          <!-- Salasanan vahvuuden arviointi -->
-          <div>
-            <div class="flex items-center justify-between text-sm text-slate-600">
-              <span>Strength</span><span id="strengthLabel" class="font-medium">—</span> <!-- Vahvuuslabel -->
-            </div>
-            <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden mt-2"> <!-- Taustapalkki -->
-              <div id="bar" class="h-full bg-indigo-600" style="width:0%;"></div> <!-- Täyttöpalkki -->
-            </div>
+          <div class="text-sm text-slate-600 flex justify-between"> <!-- Vahvuus -->
+            <span>Strength</span><span id="strengthLabel">—</span> <!-- Vahvuusteksti -->
           </div>
-
-          <!-- Vinkki käyttäjälle -->
-          <p class="text-xs text-slate-500">Tip: store passwords in a password manager, not plaintext.</p>
+          <div class="w-full h-2 bg-slate-200 rounded"> <!-- Vahvuuspalkki -->
+            <div id="bar" class="h-full bg-indigo-600" style="width:0%"></div> <!-- Palkin täyttö -->
+          </div>
         </div>
+
       </div>
     </div>
   </main>
 
-  <!-- JavaScript toiminnot -->
   <script>
-    // Haetaan kaikki elementit muuttujiin
+    // Elementit
     const els = {
       length: document.getElementById('length'),
       lenLabel: document.getElementById('lenLabel'),
@@ -100,31 +76,29 @@
       strengthLabel: document.getElementById('strengthLabel'),
     };
 
-    // Päivitetään pituuden numeroarvo labeliin
-    els.lenLabel.textContent = els.length.value;
-    els.length.addEventListener('input', () => (els.lenLabel.textContent = els.length.value));
+    els.length.addEventListener('input', () => {
+      els.lenLabel.textContent = els.length.value; // Päivitys
+    });
 
-    // Yksinkertainen salasanan vahvuuden arviointi
+    // Vahvuus
     function zxcvbnLite(pwd) {
       let score = 0;
       if (!pwd) return 0;
-      const sets = [/[a-z]/, /[A-Z]/, /[0-9]/, /[!@#$%^&*\-_=+?]/]; // tarkistettavat merkkityypit
-      score += Math.min(4, sets.reduce((acc, re) => acc + (re.test(pwd) ? 1 : 0), 0)); // lisätään pisteitä jos useita tyyppejä
-      score += Math.min(4, Math.floor(pwd.length / 4)); // lisätään pisteitä pituuden mukaan
-      const repeats = /(.)\1{2,}/.test(pwd) ? 1 : 0; // rangaistus toistuvista merkeistä
-      score -= repeats;
-      return Math.max(0, Math.min(8, score)); // palautetaan 0–8 pistettä
+      const sets = [/[a-z]/, /[A-Z]/, /[0-9]/, /[!@#$%^&*\-_=+?]/];
+      score += Math.min(4, sets.reduce((acc, re) => acc + (re.test(pwd) ? 1 : 0), 0));
+      score += Math.min(4, Math.floor(pwd.length / 4));
+      if (/(.)\1{2,}/.test(pwd)) score -= 1;
+      return Math.max(0, Math.min(8, score));
     }
 
-    // Näytetään visuaalisesti salasanan vahvuus
+    // Palkki
     function renderStrength(score) {
-      const pct = (score / 8) * 100;
-      els.bar.style.width = pct + '%';
       const labels = ['Very weak', 'Weak', 'Okay', 'Fair', 'Good', 'Strong', 'Very strong', 'Excellent', 'Elite'];
+      els.bar.style.width = (score / 8) * 100 + '%';
       els.strengthLabel.textContent = labels[Math.round(score)] || '—';
     }
 
-    // Lähettää pyynnön Flask-backendille uuden salasanan luomiseksi
+    // Generointi
     async function generate() {
       const payload = {
         length: Number(els.length.value),
@@ -136,7 +110,7 @@
       };
 
       try {
-        const res = await fetch("/api/generate", { // Pyytää POST:lla Flaskilta uutta salasanaa
+        const res = await fetch("/api/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -144,27 +118,24 @@
         const data = await res.json();
         if (data.password) {
           els.password.value = data.password;
-          renderStrength(zxcvbnLite(data.password)); // Arvioi ja näyttää vahvuuden
+          renderStrength(zxcvbnLite(data.password)); // Näyttö
         } else {
           els.password.value = "Error: " + (data.error || "Unknown");
         }
-      } catch (err) {
-        els.password.value = "Server error"; // Näytetään virhe, jos pyyntö epäonnistui
+      } catch {
+        els.password.value = "Server error"; // Virhe
       }
     }
 
-    // Klikkaus generoi salasanan
-    els.generate.addEventListener('click', generate);
-
-    // Kopioi salasana leikepöydälle
-    els.copy.addEventListener('click', async () => {
+    els.generate.addEventListener('click', generate); // Klikki
+    els.copy.addEventListener('click', async () => { // Kopiointi
       if (!els.password.value) return;
       try {
-        await navigator.clipboard.writeText(els.password.value); // Moderni tapa kopioida
+        await navigator.clipboard.writeText(els.password.value);
         els.copy.textContent = 'Copied!';
-        setTimeout(() => (els.copy.textContent = 'Copy'), 1200);
-      } catch (_) {
-        els.password.select(); // Vanha varatapa
+        setTimeout(() => (els.copy.textContent = 'Copy'), 1000);
+      } catch {
+        els.password.select();
         document.execCommand('copy');
       }
     });
