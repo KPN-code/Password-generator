@@ -1,65 +1,153 @@
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Password Generator</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-      .card { box-shadow: 0 10px 25px rgba(0,0,0,.08); }
-      .range { accent-color: #4f46e5; }
-    </style>
-  </head>
-  <body class="bg-slate-50 min-h-screen flex items-center justify-center p-6">
-    <main class="w-full max-w-2xl">
-      <div class="card bg-white rounded-2xl p-6 md:p-8">
-        <h1 class="text-2xl md:text-3xl font-semibold tracking-tight mb-2">Password Generator</h1>
-        <p class="text-slate-600 mb-6">Generate strong, customizable passwords. Built with <span class="font-semibold">Python + Flask</span>.</p>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Password Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    .card { box-shadow: 0 10px 25px rgba(0,0,0,.08); }
+    .range { accent-color: #4f46e5; }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-6">
+  <main class="w-full max-w-2xl">
+    <div class="card bg-white rounded-2xl p-6 md:p-8">
+      <h1 class="text-2xl md:text-3xl font-semibold tracking-tight mb-2">Password Generator</h1>
+      <p class="text-slate-600 mb-6">Generate strong, customizable passwords. Built with <span class="font-semibold">JavaScript</span>.</p>
 
-        <div class="grid md:grid-cols-2 gap-6">
-          <div class="space-y-4">
-            <label class="block text-sm font-medium text-slate-700">Length: <span id="lenLabel" class="font-semibold">16</span></label>
-            <input id="length" class="w-full range" type="range" min="8" max="64" value="16" />
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <label class="block text-sm font-medium text-slate-700">Length: <span id="lenLabel" class="font-semibold">16</span></label>
+          <input id="length" class="w-full range" type="range" min="8" max="64" value="16" />
 
-            <div class="grid grid-cols-2 gap-3 pt-2">
-              <label class="flex items-center gap-2 text-slate-700"><input id="lower" type="checkbox" checked> Lowercase</label>
-              <label class="flex items-center gap-2 text-slate-700"><input id="upper" type="checkbox" checked> Uppercase</label>
-              <label class="flex items-center gap-2 text-slate-700"><input id="digits" type="checkbox" checked> Digits</label>
-              <label class="flex items-center gap-2 text-slate-700"><input id="symbols" type="checkbox" checked> Symbols</label>
-            </div>
-
-            <label class="flex items-center gap-2 text-slate-700 pt-2">
-              <input id="avoid" type="checkbox" checked> Avoid ambiguous chars
-            </label>
-
-            <button id="generate" class="mt-4 w-full md:w-auto inline-flex items-center justify-center rounded-xl px-4 py-2.5 bg-indigo-600 text-white font-medium hover:bg-indigo-700 active:scale-[.99] transition">Generate</button>
+          <div class="grid grid-cols-2 gap-3 pt-2">
+            <label class="flex items-center gap-2 text-slate-700"><input id="lower" type="checkbox" checked> Lowercase</label>
+            <label class="flex items-center gap-2 text-slate-700"><input id="upper" type="checkbox" checked> Uppercase</label>
+            <label class="flex items-center gap-2 text-slate-700"><input id="digits" type="checkbox" checked> Digits</label>
+            <label class="flex items-center gap-2 text-slate-700"><input id="symbols" type="checkbox" checked> Symbols</label>
           </div>
 
-          <div class="space-y-4">
-            <label class="block text-sm font-medium text-slate-700">Password</label>
-            <div class="flex items-center gap-3">
-              <input id="password" type="text" readonly class="flex-1 rounded-xl border border-slate-200 px-3 py-2.5 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Click Generate" />
-              <button id="copy" class="rounded-xl px-3 py-2.5 border border-slate-200 hover:bg-slate-100">Copy</button>
-            </div>
+          <label class="flex items-center gap-2 text-slate-700 pt-2">
+            <input id="avoid" type="checkbox" checked> Avoid ambiguous chars
+          </label>
 
-            <div>
-              <div class="flex items-center justify-between text-sm text-slate-600">
-                <span>Strength</span><span id="strengthLabel" class="font-medium">—</span>
-              </div>
-              <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden mt-2">
-                <div id="bar" class="h-full bg-indigo-600" style="width:0%;"></div>
-              </div>
-            </div>
+          <button id="generate" class="mt-4 w-full md:w-auto inline-flex items-center justify-center rounded-xl px-4 py-2.5 bg-indigo-600 text-white font-medium hover:bg-indigo-700 active:scale-[.99] transition">Generate</button>
+        </div>
 
-            <p class="text-xs text-slate-500">Tip: store passwords in a password manager, not plaintext.</p>
+        <div class="space-y-4">
+          <label class="block text-sm font-medium text-slate-700">Password</label>
+          <div class="flex items-center gap-3">
+            <input id="password" type="text" readonly class="flex-1 rounded-xl border border-slate-200 px-3 py-2.5 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Click Generate" />
+            <button id="copy" class="rounded-xl px-3 py-2.5 border border-slate-200 hover:bg-slate-100">Copy</button>
           </div>
+
+          <div>
+            <div class="flex items-center justify-between text-sm text-slate-600">
+              <span>Strength</span><span id="strengthLabel" class="font-medium">—</span>
+            </div>
+            <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden mt-2">
+              <div id="bar" class="h-full bg-indigo-600" style="width:0%;"></div>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-500">Tip: store passwords in a password manager, not plaintext.</p>
         </div>
       </div>
-    </main>
+    </div>
+  </main>
 
-    <script src="/static/main.js"></script>
-  </body>
+  <script>
+    const els = {
+      length: document.getElementById('length'),
+      lenLabel: document.getElementById('lenLabel'),
+      lower: document.getElementById('lower'),
+      upper: document.getElementById('upper'),
+      digits: document.getElementById('digits'),
+      symbols: document.getElementById('symbols'),
+      avoid: document.getElementById('avoid'),
+      generate: document.getElementById('generate'),
+      password: document.getElementById('password'),
+      copy: document.getElementById('copy'),
+      bar: document.getElementById('bar'),
+      strengthLabel: document.getElementById('strengthLabel'),
+    };
+
+    els.lenLabel.textContent = els.length.value;
+    els.length.addEventListener('input', () => (els.lenLabel.textContent = els.length.value));
+
+    function zxcvbnLite(pwd) {
+      let score = 0;
+      if (!pwd) return 0;
+      const sets = [/[a-z]/, /[A-Z]/, /[0-9]/, /[!@#$%^&*\-_=+?]/];
+      score += Math.min(4, sets.reduce((acc, re) => acc + (re.test(pwd) ? 1 : 0), 0));
+      score += Math.min(4, Math.floor(pwd.length / 4));
+      const repeats = /(.)\1{2,}/.test(pwd) ? 1 : 0;
+      score -= repeats;
+      return Math.max(0, Math.min(8, score));
+    }
+
+    function renderStrength(score) {
+      const pct = (score / 8) * 100;
+      els.bar.style.width = pct + '%';
+      const labels = ['Very weak', 'Weak', 'Okay', 'Fair', 'Good', 'Strong', 'Very strong', 'Excellent', 'Elite'];
+      els.strengthLabel.textContent = labels[Math.round(score)] || '—';
+    }
+
+    function generatePassword(opts) {
+      const lower = 'abcdefghjkmnpqrstuvwxyz';
+      const upper = 'ABCDEFGHJKMNPQRSTUVWXYZ';
+      const digits = '23456789';
+      const symbols = '!@#$%^&*-=+?';
+      const ambiguous = 'iloO01';
+
+      let chars = '';
+      if (opts.lower) chars += lower;
+      if (opts.upper) chars += upper;
+      if (opts.digits) chars += digits;
+      if (opts.symbols) chars += symbols;
+      if (!chars) return '';
+
+      if (!opts.avoidAmbiguous) chars += ambiguous;
+
+      let pwd = '';
+      for (let i = 0; i < opts.length; i++) {
+        pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return pwd;
+    }
+
+    function generate() {
+      const payload = {
+        length: Number(els.length.value),
+        lower: els.lower.checked,
+        upper: els.upper.checked,
+        digits: els.digits.checked,
+        symbols: els.symbols.checked,
+        avoidAmbiguous: els.avoid.checked,
+      };
+
+      const password = generatePassword(payload);
+      els.password.value = password;
+      renderStrength(zxcvbnLite(password));
+    }
+
+    els.generate.addEventListener('click', generate);
+    els.copy.addEventListener('click', async () => {
+      if (!els.password.value) return;
+      try {
+        await navigator.clipboard.writeText(els.password.value);
+        els.copy.textContent = 'Copied!';
+        setTimeout(() => (els.copy.textContent = 'Copy'), 1200);
+      } catch (_) {
+        els.password.select();
+        document.execCommand('copy');
+      }
+    });
+  </script>
+</body>
 </html>
