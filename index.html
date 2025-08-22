@@ -18,11 +18,14 @@
   <main class="w-full max-w-2xl">
     <div class="card bg-white rounded-2xl p-6 md:p-8">
       <h1 class="text-2xl md:text-3xl font-semibold tracking-tight mb-2">Password Generator</h1>
-      <p class="text-slate-600 mb-6">Generate strong, customizable passwords. Built with <span class="font-semibold">JavaScript</span>.</p>
+      <p class="text-slate-600 mb-6">Generate strong, customizable passwords. Powered by <span class="font-semibold">Flask</span>.</p>
 
       <div class="grid md:grid-cols-2 gap-6">
+        <!-- Options -->
         <div class="space-y-4">
-          <label class="block text-sm font-medium text-slate-700">Length: <span id="lenLabel" class="font-semibold">16</span></label>
+          <label class="block text-sm font-medium text-slate-700">
+            Length: <span id="lenLabel" class="font-semibold">16</span>
+          </label>
           <input id="length" class="w-full range" type="range" min="8" max="64" value="16" />
 
           <div class="grid grid-cols-2 gap-3 pt-2">
@@ -39,6 +42,7 @@
           <button id="generate" class="mt-4 w-full md:w-auto inline-flex items-center justify-center rounded-xl px-4 py-2.5 bg-indigo-600 text-white font-medium hover:bg-indigo-700 active:scale-[.99] transition">Generate</button>
         </div>
 
+        <!-- Output -->
         <div class="space-y-4">
           <label class="block text-sm font-medium text-slate-700">Password</label>
           <div class="flex items-center gap-3">
@@ -80,6 +84,7 @@
     els.lenLabel.textContent = els.length.value;
     els.length.addEventListener('input', () => (els.lenLabel.textContent = els.length.value));
 
+    // arvioidaan vahvuus (yksinkertainen)
     function zxcvbnLite(pwd) {
       let score = 0;
       if (!pwd) return 0;
@@ -98,30 +103,7 @@
       els.strengthLabel.textContent = labels[Math.round(score)] || '—';
     }
 
-    function generatePassword(opts) {
-      const lower = 'abcdefghjkmnpqrstuvwxyz';
-      const upper = 'ABCDEFGHJKMNPQRSTUVWXYZ';
-      const digits = '23456789';
-      const symbols = '!@#$%^&*-=+?';
-      const ambiguous = 'iloO01';
-
-      let chars = '';
-      if (opts.lower) chars += lower;
-      if (opts.upper) chars += upper;
-      if (opts.digits) chars += digits;
-      if (opts.symbols) chars += symbols;
-      if (!chars) return '';
-
-      if (!opts.avoidAmbiguous) chars += ambiguous;
-
-      let pwd = '';
-      for (let i = 0; i < opts.length; i++) {
-        pwd += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      return pwd;
-    }
-
-    function generate() {
+    async function generate() {
       const payload = {
         length: Number(els.length.value),
         lower: els.lower.checked,
@@ -131,9 +113,22 @@
         avoidAmbiguous: els.avoid.checked,
       };
 
-      const password = generatePassword(payload);
-      els.password.value = password;
-      renderStrength(zxcvbnLite(password));
+      try {
+        const res = await fetch("/api/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (data.password) {
+          els.password.value = data.password;
+          renderStrength(zxcvbnLite(data.password));
+        } else {
+          els.password.value = "Error: " + (data.error || "Unknown");
+        }
+      } catch (err) {
+        els.password.value = "Server error";
+      }
     }
 
     els.generate.addEventListener('click', generate);
