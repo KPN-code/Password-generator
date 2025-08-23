@@ -1,61 +1,20 @@
+# Tuodaan tarvittavat kirjastot
 from flask import Flask, jsonify, render_template, request
-import secrets
-import string
+from flask_cors import CORS
+from generator.password_generator import password_generator  # Tuodaan salasanojen generointifunktio omasta tiedostosta
 
+# Luodaan Flask-sovellus
 app = Flask(__name__)
 
-AMBIGUOUS = "{}[]()/\\'\"`~,;:.<>"
-CONFUSING = "O0oIl1|"
+# Sallitaan CORS eli pyynnöt front-endistä GitHub Pages käyttäjältä KPN-code
+CORS(app, origins=["https://KPN-code.github.io"])
 
-
-def generate_password(length=16, use_lower=True, use_upper=True,
-                      use_digits=True, use_symbols=True,
-                      avoid_ambiguous=True):
-    pools = []
-    if use_lower:
-        pools.append(string.ascii_lowercase)
-    if use_upper:
-        pools.append(string.ascii_uppercase)
-    if use_digits:
-        pools.append(string.digits)
-    if use_symbols:
-        pools.append("!@#$%^&*-_=+?")
-
-    if not pools:
-        raise ValueError("Select at least one character set")
-
-    # rakennetaan merkistö
-    alphabet = "".join(pools)
-    if avoid_ambiguous:
-        for ch in AMBIGUOUS + CONFUSING:
-            alphabet = alphabet.replace(ch, "")
-        pools = [
-            "".join([c for c in pool if c not in (AMBIGUOUS + CONFUSING)])
-            for pool in pools
-        ]
-
-    # varmistetaan, että pituus riittää
-    if length < len(pools):
-        raise ValueError(f"Length must be at least {len(pools)} for the chosen options")
-
-    # yksi merkki jokaisesta poolista
-    password_chars = [secrets.choice(pool) for pool in pools]
-
-    # loput satunnaisesti
-    for _ in range(length - len(password_chars)):
-        password_chars.append(secrets.choice(alphabet))
-
-    # sekoitus
-    secrets.SystemRandom().shuffle(password_chars)
-
-    return "".join(password_chars)
-
-
+# Palautetaan front-endin index.html
 @app.route("/")
 def index():
     return render_template("index.html")
 
-
+# Salasanan generointi JSON POST-pyynnöllä
 @app.route("/api/generate", methods=["POST"])
 def api_generate():
     try:
@@ -67,13 +26,20 @@ def api_generate():
         use_symbols = bool(data.get("symbols", True))
         avoid_ambiguous = bool(data.get("avoidAmbiguous", True))
 
-        pwd = generate_password(length, use_lower, use_upper, use_digits, use_symbols, avoid_ambiguous)
+        pwd = password_generator(
+            length=length,
+            use_lower=use_lower,
+            use_upper=use_upper,
+            use_digits=use_digits,
+            use_symbols=use_symbols,
+            avoid_ambiguous=avoid_ambiguous
+        )
         return jsonify({"password": pwd}), 200
+
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
-    except Exception:
+    except Exception as e:
         return jsonify({"error": "Unexpected server error"}), 500
-
 
 if __name__ == "__main__":
     # Lokaali testaus
